@@ -53,6 +53,10 @@ vim.lsp.handlers["window/showMessage"] = function(_, result)
   end
 end
 
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+  border = "rounded",
+})
+
 M.default_config = function(name)
   return require("lspconfig.server_configurations." .. name).default_config
 end

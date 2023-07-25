@@ -26,8 +26,8 @@ autocmd("LspAttach", {
       end
     end
 
-    vim.keymap.set("n", "df", vim.lsp.buf.format, map_opts)
-    vim.keymap.set("n", "gd", vim.diagnostic.open_float, map_opts)
+    vim.keymap.set("n", "mf", vim.lsp.buf.format, map_opts)
+    vim.keymap.set("n", "gD", vim.diagnostic.open_float, map_opts)
     vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, map_opts)
     vim.keymap.set("n", "]d", vim.diagnostic.goto_next, map_opts)
 
@@ -49,10 +49,6 @@ autocmd("LspAttach", {
     if client.server_capabilities.documentSymbolProvider then
       require("nvim-navic").attach(client, bufnr)
     end
-
-    vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-      border = "rounded",
-    })
 
   end,
 })

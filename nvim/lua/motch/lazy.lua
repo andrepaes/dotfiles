@@ -41,37 +41,37 @@ require("lazy").setup({
       {"<leader>n", ":NERDTreeFocus<CR>", mode = "n", desc = "Focus on file explorer"}
     }
   },
-  {
-    "luukvbaal/statuscol.nvim",
-    event = { "BufReadPost", "BufNewFile" },
-    init = function()
-      vim.opt.foldcolumn = "1"
-      vim.opt.foldlevelstart = 99
-      vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-      vim.opt.foldmethod = "expr"
-      vim.opt.mousemodel = "extend"
-      vim.opt.fillchars:append {
-        foldopen = "",
-        foldsep = " ",
-        foldclose = "",
-      }
-    end,
-    config = function()
-      local builtin = require("statuscol.builtin")
-      require("statuscol").setup {
-        setopt = true,
-        foldfunc = "builtin",
-        segments = {
-          { text = { builtin.lnumfunc }, click = "v:lua.ScLa" },
-          { text = { "%s" }, click = "v:lua.ScSa" },
-          { text = { builtin.foldfunc, " " }, condition = { true, builtin.not_empty }, click = "v:lua.ScFa" },
-        },
-      }
-    end,
-    dependencies = {
-      "lewis6991/gitsigns.nvim",
-    },
-  },
+ --{
+ --  "luukvbaal/statuscol.nvim",
+ --  event = { "BufReadPost", "BufNewFile" },
+ --  init = function()
+ --    vim.opt.foldcolumn = "1"
+ --    vim.opt.foldlevelstart = 99
+ --    vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+ --    vim.opt.foldmethod = "expr"
+ --    vim.opt.mousemodel = "extend"
+ --    vim.opt.fillchars:append {
+ --      foldopen = "",
+ --      foldsep = " ",
+ --      foldclose = "",
+ --    }
+ --  end,
+ --  config = function()
+ --    local builtin = require("statuscol.builtin")
+ --    require("statuscol").setup {
+ --      setopt = true,
+ --      foldfunc = "builtin",
+ --      segments = {
+ --        { text = { builtin.lnumfunc }, click = "v:lua.ScLa" },
+ --        { text = { "%s" }, click = "v:lua.ScSa" },
+ --        { text = { builtin.foldfunc, " " }, condition = { true, builtin.not_empty }, click = "v:lua.ScFa" },
+ --      },
+ --    }
+ --  end,
+ --  dependencies = {
+ --    "lewis6991/gitsigns.nvim",
+ --  },
+ --},
   { "ruanyl/vim-gh-line", event = { "BufReadPost", "BufNewFile" } },
   { "alvan/vim-closetag", ft = { "html", "liquid", "javascriptreact", "typescriptreact" } },
   { "christoomey/vim-tmux-navigator", event = "VeryLazy" },
@@ -423,18 +423,18 @@ require("lazy").setup({
         -- return true: if buffer is ok to be saved
         -- return false: if it's not ok to be saved
         condition = function(buf)
-          local fn = vim.fn
-          local utils = require("auto-save.utils.data")
+         --local fn = vim.fn
+         --local utils = require("auto-save.utils.data")
 
-          if
-            fn.getbufvar(buf, "&modifiable") == 1 and
-            utils.not_in(fn.getbufvar(buf, "&filetype"), {}) then
-            return true -- met condition(s), can save
-          end
+         --if
+         --  fn.getbufvar(buf, "&modifiable") == 1 and
+         --  utils.not_in(fn.getbufvar(buf, "&filetype"), {}) then
+         --  return true -- met condition(s), can save
+         --end
           return false -- can't save
         end,
           write_all_buffers = true, -- write all buffers when the current one meets `condition`
-          debounce_delay = 135, -- saves the file at most every `debounce_delay` milliseconds
+          debounce_delay = 60000, -- saves the file at most every `debounce_delay` milliseconds
     }
     end,
   },
@@ -486,10 +486,10 @@ require("lazy").setup({
         --   gs.blame_line { full = true }
         -- end)
         -- map("n", "<leader>tb", gs.toggle_current_line_blame)
-        -- map("n", "<leader>hd", gs.diffthis)
-        -- map("n", "<leader>hD", function()
-        --   gs.diffthis("~")
-        -- end)
+        map("n", "<leader>hd", gs.diffthis)
+         map("n", "<leader>hD", function()
+           gs.diffthis("~")
+         end)
         -- map("n", "<leader>td", gs.toggle_deleted)
 
         -- Text object
@@ -605,34 +605,34 @@ require("lazy").setup({
     end,
     dependencies = { "nvim-lua/plenary.nvim" },
   },
-  {
-    "lukas-reineke/indent-blankline.nvim",
-    event = { "BufReadPost", "BufNewFile" },
-    name = "indent_blankline",
-    init = function()
-      vim.opt.list = true
-    end,
-    opts = {
-      viewport_buffer = 100,
-      space_char_blankline = " ",
-      show_current_context = true,
-      show_current_context_start = true,
-      use_treesitter = true,
-      char = "▎",
-      context_char = "▎",
-      filetype_exclude = {
-        "markdown",
-        "terminal",
-        "json",
-        "lspinfo",
-        "packer",
-        "checkhealth",
-        "help",
-        "lazy",
-        "",
-      },
-    },
-  },
+ --{
+ --  "lukas-reineke/indent-blankline.nvim",
+ --  event = { "BufReadPost", "BufNewFile" },
+ --  name = "indent_blankline",
+ --  init = function()
+ --    vim.opt.list = true
+ --  end,
+ --  opts = {
+ --    viewport_buffer = 100,
+ --    space_char_blankline = " ",
+ --    show_current_context = true,
+ --    show_current_context_start = true,
+ --    use_treesitter = true,
+ --    char = "▎",
+ --    context_char = "▎",
+ --    filetype_exclude = {
+ --      "markdown",
+ --      "terminal",
+ --      "json",
+ --      "lspinfo",
+ --      "packer",
+ --      "checkhealth",
+ --      "help",
+ --      "lazy",
+ --      "",
+ --    },
+ --  },
+ --},
   { "mg979/vim-visual-multi", branch = "master", event = { "BufReadPost", "BufNewFile" } },
   {
     "rebelot/kanagawa.nvim",
@@ -713,6 +713,7 @@ require("lazy").setup({
       }
     end,
   },
+  { "ellisonleao/gruvbox.nvim", priority = 1000 },
   {
     "sainnhe/everforest",
     lazy = true,
@@ -722,6 +723,7 @@ require("lazy").setup({
 
       vim.g.everforest_diagnostic_virtual_text = "colored"
       vim.g.everforest_enable_italic = true
+      --vim.g.everforest_background = 'hard'
       vim.g.everforest_colors_override = {
         -- bg8 = { "#000000", 235 },
         bg0 = { "#273433", "235" },
@@ -736,7 +738,7 @@ require("lazy").setup({
     "nvim-lualine/lualine.nvim",
     event = "VeryLazy",
     opts = {
-      options = { globalstatus = true, theme = "kanagawa" },
+      options = { globalstatus = true, theme = "everforest" },
       extensions = { "fzf" },
       sections = {
         lualine_c = { { "filename", path = 1 } },
@@ -815,14 +817,14 @@ require("lazy").setup({
     },
   },
 
-  {
-    "nvim-treesitter/nvim-treesitter-context",
-    lazy = true,
-    event = { "BufReadPost", "BufNewFile" },
-    config = function()
-      require("treesitter-context").setup()
-    end,
-  },
+ --{
+ --  "nvim-treesitter/nvim-treesitter-context",
+ --  lazy = true,
+ --  event = { "BufReadPost", "BufNewFile" },
+ --  config = function()
+ --    require("treesitter-context").setup()
+ --  end,
+ --},
   {
     "nvim-lua/plenary.nvim",
     cmd = {
@@ -835,25 +837,45 @@ require("lazy").setup({
     event = { "BufReadPre", "BufNewFile" },
     config = function()
       local elixir = require("elixir")
+      local elixirls_old = vim.fn.expand(os.getenv("OLD_ELIXIR_LS"))
+      local function setup_elixirls(elixirls_path)
+        if elixirls_path == "." then
+          return {
+            repo = "elixir-lsp/elixir-ls",
+            branch = "master",
+            settings = elixir.elixirls.settings {
+              dialyzerEnabled = false,
+              enableTestLenses = false,
+            },
+            log_level = vim.lsp.protocol.MessageType.Log,
+            message_level = vim.lsp.protocol.MessageType.Log,
+            on_attach = function()
+              vim.keymap.set("n", "<space>fp", ":ElixirFromPipe<cr>", { buffer = true, noremap = true })
+              vim.keymap.set("n", "<space>tp", ":ElixirToPipe<cr>", { buffer = true, noremap = true })
+              vim.keymap.set("v", "<space>em", ":ElixirExpandMacro<cr>", { buffer = true, noremap = true })
+            end
+          }
+        else
+          return {
+            cmd = elixirls_path,
+            settings = elixir.elixirls.settings {
+              dialyzerEnabled = false,
+              enableTestLenses = false,
+            },
+            log_level = vim.lsp.protocol.MessageType.Log,
+            message_level = vim.lsp.protocol.MessageType.Log,
+            on_attach = function()
+              vim.keymap.set("n", "<space>fp", ":ElixirFromPipe<cr>", { buffer = true, noremap = true })
+              vim.keymap.set("n", "<space>tp", ":ElixirToPipe<cr>", { buffer = true, noremap = true })
+              vim.keymap.set("v", "<space>em", ":ElixirExpandMacro<cr>", { buffer = true, noremap = true })
+            end
+          }
+        end
+      end
 
       elixir.setup {
-        credo = {},
-        elixirls = {
-          -- cmd = { vim.fn.expand("~/.local/share/nvim/lsp_servers/elixir/elixir-ls/rel/language_server.sh") },
-          repo = "elixir-lsp/elixir-ls",
-          branch = "master",
-          settings = elixir.elixirls.settings {
-            dialyzerEnabled = false,
-            enableTestLenses = false,
-          },
-          log_level = vim.lsp.protocol.MessageType.Log,
-          message_level = vim.lsp.protocol.MessageType.Log,
-          on_attach = function()
-            vim.keymap.set("n", "<space>fp", ":ElixirFromPipe<cr>", { buffer = true, noremap = true })
-            vim.keymap.set("n", "<space>tp", ":ElixirToPipe<cr>", { buffer = true, noremap = true })
-            vim.keymap.set("v", "<space>em", ":ElixirExpandMacro<cr>", { buffer = true, noremap = true })
-          end,
-        },
+        credo = {enable=false},
+        elixirls = setup_elixirls(elixirls_old),
       }
     end,
     dependencies = {
@@ -898,6 +920,7 @@ require("lazy").setup({
   },
 
   { "junegunn/vim-easy-align", event = "VeryLazy" },
+  {'elixir-editors/vim-elixir'},
 }, {
   concurrency = 30,
   dev = { path = "~/src" },
