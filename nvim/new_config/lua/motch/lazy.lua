@@ -812,7 +812,7 @@ require("lazy").setup({
 
     dependencies = {
       "nvim-treesitter/nvim-treesitter-textobjects",
-      "nvim-treesitter/nvim-treesitter-context",
+      --"nvim-treesitter/nvim-treesitter-context",
       "nvim-treesitter/playground",
     },
   },
@@ -837,7 +837,7 @@ require("lazy").setup({
     event = { "BufReadPre", "BufNewFile" },
     config = function()
       local elixir = require("elixir")
-      local elixirls_old = vim.fn.expand(os.getenv("OLD_ELIXIR_LS"))
+      local elixirls_old = vim.fn.expand("~/Downloads/elixir-ls-1.12-23.3/language_server.sh")
       local function setup_elixirls(elixirls_path)
         if elixirls_path == "." then
           return {
