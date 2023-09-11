@@ -56,10 +56,51 @@ vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
   border = "rounded",
 })
 
+local elixirls_old = vim.fn.expand("~/Downloads/elixir-ls-1.12-23.3/language_server.sh")
+local elixir = require("elixir")
+local elixir_ls = vim.env.ELIXIR_LS
+
+local function setup_elixirls(elixir_lsp)
+  if elixir_lsp == "elixirls" and elixir_ls == "newest" then
+    return {
+      repo = "elixir-lsp/elixir-ls",
+      branch = "master",
+      settings = elixir.elixirls.settings {
+        dialyzerEnabled = false,
+        enableTestLenses = false,
+      },
+      log_level = vim.lsp.protocol.MessageType.Log,
+      message_level = vim.lsp.protocol.MessageType.Log,
+      on_attach = function()
+        vim.keymap.set("n", "<space>fp", ":ElixirFromPipe<cr>", { buffer = true, noremap = true })
+        vim.keymap.set("n", "<space>tp", ":ElixirToPipe<cr>", { buffer = true, noremap = true })
+        vim.keymap.set("v", "<space>em", ":ElixirExpandMacro<cr>", { buffer = true, noremap = true })
+      end
+    }
+  elseif elixir_lsp == "elixirls" then
+    return {
+      cmd = elixirls_old,
+      settings = elixir.elixirls.settings {
+        dialyzerEnabled = false,
+        enableTestLenses = false,
+      },
+      log_level = vim.lsp.protocol.MessageType.Log,
+      message_level = vim.lsp.protocol.MessageType.Log,
+      on_attach = function()
+        vim.keymap.set("n", "<space>fp", ":ElixirFromPipe<cr>", { buffer = true, noremap = true })
+        vim.keymap.set("n", "<space>tp", ":ElixirToPipe<cr>", { buffer = true, noremap = true })
+        vim.keymap.set("v", "<space>em", ":ElixirExpandMacro<cr>", { buffer = true, noremap = true })
+      end
+    }
+  else
+    return {enable = false}
+  end
+end
+
 require("elixir").setup({
-  nextls = {enable = false},
-  credo = {enable = true},
-  elixirls = {enable = true},
+  nextls = {enable = vim.env.ELIXIR_LSP == "nextls"},
+  credo = {enable = false},
+  elixirls = setup_elixirls(vim.env.ELIXIR_LSP),
 })
 require("output_panel").setup()
 
