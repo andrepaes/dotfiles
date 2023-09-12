@@ -837,9 +837,10 @@ require("lazy").setup({
     event = { "BufReadPre", "BufNewFile" },
     config = function()
       local elixir = require("elixir")
+      local elixir_lsp = vim.env.ELIXIR_LSP
       local elixirls_old = vim.fn.expand("~/Downloads/elixir-ls-1.12-23.3/language_server.sh")
-      local function setup_elixirls(elixirls_path)
-        if elixirls_path == "." then
+      local function setup_elixirls(elixir_lsp)
+        if elixir_lsp == "." then
           return {
             repo = "elixir-lsp/elixir-ls",
             branch = "master",
