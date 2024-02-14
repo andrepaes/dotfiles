@@ -1,7 +1,7 @@
 _G.motch = {}
 local Plug = vim.fn['plug#']
 vim.call('plug#begin', '~/.config/nvim/plugged')
-Plug('morhetz/gruvbox')
+Plug('ellisonleao/gruvbox.nvim')
 Plug('terryma/vim-multiple-cursors')
 Plug('sheerun/vim-polyglot')
 Plug('junegunn/fzf', {['do'] = vim.fn['fzf#install']})
@@ -19,7 +19,7 @@ Plug('tpope/vim-fugitive')
 Plug('mhinz/vim-mix-format')
 Plug('nvim-lua/plenary.nvim')
 Plug('nvim-telescope/telescope.nvim')
-Plug('nvim-treesitter/nvim-treesitter', {['do'] = vim.fn[':TSUpdate']})
+Plug('nvim-treesitter/nvim-treesitter', {['do'] = vim.fn[':TSUpdate'], ['tag'] = 'v0.9.1'})
 Plug('elixir-tools/elixir-tools.nvim')
 Plug('mhanberg/output-panel.nvim')
 Plug('christoomey/vim-tmux-navigator')
@@ -31,6 +31,9 @@ Plug('MunifTanjim/nui.nvim')
 Plug('echasnovski/mini.nvim')
 Plug('nvim-tree/nvim-web-devicons')
 Plug('elixir-editors/vim-elixir')
+Plug('rcarriga/nvim-notify')
+Plug('jedrzejboczar/possession.nvim')
+Plug('hrsh7th/nvim-cmp')
 vim.call('plug#end')
 
 local sets = vim.opt
@@ -44,7 +47,6 @@ sets.hidden=true
 sets.number=true
 sets.relativenumber=true
 sets.termguicolors=true
-vim.cmd([[set clipboard+=unnamedplus]])
 vim.cmd([[set relativenumber]])
 
 local vim_notify_notfier = function(cmd, exit)
@@ -75,7 +77,7 @@ sets.shiftwidth=2
 vim.opt.clipboard:append { 'unnamed', 'unnamedplus' }
 
 vim.g.mapleader=" "
-vim.g.auto_save = true
+vim.g.auto_save = false
 vim.g.auto_save_write_all_buffers = true
 
 vim.g.mix_format_on_save = 0
@@ -153,7 +155,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 require('nvim-treesitter.configs').setup({
   ensure_installed = {"elixir", "heex", "eex"}, -- only install parsers for elixir and heex
-  -- ensure_installed = "all", -- install parsers for all supported languages
   sync_install = false,
   ignore_install = { },
   highlight = {
@@ -162,15 +163,44 @@ require('nvim-treesitter.configs').setup({
   },
 })
 
-
-
+require('telescope').setup{
+  pickers = {
+    find_files = {
+      theme = "ivy"
+    },
+    live_grep = {
+      theme = "ivy"
+    },
+    git_files = {
+      theme = "ivy"
+    },
+    lsp_document_symbols = {
+      theme = "ivy"
+    }
+  }
+}
 
 vim.keymap.set("n", "<leader>sv", ":source $MYVIMRC<cr>", { noremap = true })
 vim.keymap.set("n", "<c-f>", ":Ag<space>", { noremap = true })
 vim.keymap.set("n", "<leader><leader>", ":Telescope find_files<cr>", { noremap = true })
 vim.keymap.set("n", "<leader>r", "<cmd>History<cr>", { noremap = true })
 vim.keymap.set("n", "<leader>g", "<cmd>Telescope live_grep<cr>", { noremap = true })
+vim.keymap.set("n", "<leader>F", "<cmd>Telescope git_files<cr>", { noremap = true })
+vim.keymap.set("n", "<leader>co", "<cmd>Telescope lsp_document_symbols<cr>", { noremap = true })
 vim.keymap.set("n", "<leader>f", ":NERDTreeToggle<CR>", { noremap = false })
+vim.keymap.set("n", "<c-t>", ":tabnew<CR>", { noremap = false })
+vim.keymap.set("n", "<leader>1", "1gt", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>2", "2gt", { noremap = true })
+vim.keymap.set("n", "<leader>3", "3gt", { noremap = true })
+vim.keymap.set("n", "<leader>4", "4gt", { noremap = true })
+vim.keymap.set("n", "<leader>5", "5gt", { noremap = true })
+vim.keymap.set("n", "<leader>6", "6gt", { noremap = true })
+vim.keymap.set("n", "<leader>7", "7gt", { noremap = true })
+vim.keymap.set("n", "<leader>8", "8gt", { noremap = true })
+vim.keymap.set("n", "<leader>9", "9gt", { noremap = true })
+vim.keymap.set("n", "<leader>0", "0gt", { noremap = true })
+vim.keymap.set("n", "<leader>s", ":Telescope possession list<cr>", { noremap = true })
+vim.keymap.set("n", "mF", ":MixFormat<cr>", { noremap = true })
 vim.keymap.set("n", "qp", vim.cmd.cprev, { desc = "Go to the previous item in the quickfix list." })
 vim.keymap.set("n", "qn", vim.cmd.cnext, { desc = "Go to the next item in the quickfix list." })
 vim.keymap.set("n", "qq", vim.cmd.ccl, { desc = "Close quickfix list" })
@@ -178,6 +208,19 @@ vim.keymap.set("n", "tn", vim.cmd.TestNearest, { desc = "Run nearest test" })
 vim.keymap.set("n", "tf", vim.cmd.TestFile, { desc = "Run test file" })
 vim.keymap.set("n", "ts", vim.cmd.TestSuite, { desc = "Run test suite" })
 vim.keymap.set("n", "tl", vim.cmd.TestLast, { desc = "Run last test" })
+
+vim.cmd[[
+  function! ElixirUmbrellaTransform(cmd) abort
+    if match(a:cmd, 'apps/') != -1
+      return substitute(a:cmd, 'mix test apps/\([^/]*\)/', 'doppler run -- mix cmd --app \1 mix test --color ', '')
+    else
+      return a:cmd
+    end
+  endfunction
+
+  let g:test#custom_transformations = {'elixir_umbrella': function('ElixirUmbrellaTransform')}
+  let g:test#transformation = 'elixir_umbrella'
+]]
 
 require('gitsigns').setup {
   signs = {
@@ -278,7 +321,8 @@ require('lualine').setup {
     }
   },
   sections = {
-        lualine_c = { { "filename", path = 1 } },
+        lualine_a = { session_name },
+        lualine_c = { { "filename", path = 1}},
         lualine_x = { "selectioncount", "searchcount", "encoding", "fileformat", "filetype" }
   },
 
@@ -347,3 +391,90 @@ require("noice").setup({
         },
       },
     })
+  require("cmp").setup(
+    {
+        event = "InsertEnter",
+        init = function()
+          vim.opt.completeopt = { "menu", "menuone", "noselect" }
+        end,
+        config = function()
+          local cmp = require("cmp")
+
+          cmp.setup {
+            snippet = {
+              expand = function(args)
+                -- For `vsnip` user.
+                vim.fn["vsnip#anonymous"](args.body)
+              end,
+            },
+            window = {
+              completion = cmp.config.window.bordered(),
+              documentation = cmp.config.window.bordered(),
+            },
+            mapping = cmp.mapping.preset.insert {
+              ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+              ["<C-f>"] = cmp.mapping.scroll_docs(4),
+              ["<C-Space>"] = cmp.mapping.complete(),
+              ["<C-e>"] = cmp.mapping.close(),
+              ["<C-y>"] = cmp.mapping.confirm { select = true },
+            },
+            sources = {
+              { name = "nvim_lsp" },
+              { name = "vsnip" },
+              { name = "vim-dadbod-completion" },
+              { name = "spell", keyword_length = 5 },
+              -- { name = "rg", keyword_length = 3 },
+              -- { name = "buffer", keyword_length = 5 },
+              -- { name = "emoji" },
+              { name = "path" },
+              { name = "git" },
+            },
+            formatting = {
+              format = require("lspkind").cmp_format {
+                with_text = true,
+                menu = {
+                  buffer = "[Buffer]",
+                  nvim_lsp = "[LSP]",
+                  luasnip = "[LuaSnip]",
+                  -- emoji = "[Emoji]",
+                  spell = "[Spell]",
+                  path = "[Path]",
+                  cmdline = "[Cmd]",
+                },
+              },
+            },
+          }
+
+          cmp.setup.cmdline(":", {
+            mapping = cmp.mapping.preset.cmdline(),
+            sources = cmp.config.sources({ { name = "path" } }, { { name = "cmdline", keyword_length = 2 } }),
+          })
+        -- Set up lspconfig.
+          local capabilities = require('cmp_nvim_lsp').default_capabilities()
+          -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
+          require('lspconfig')['elixir_ls'].setup {
+            capabilities = capabilities
+          }
+        end,
+        dependencies = {
+          { "hrsh7th/cmp-cmdline", event = { "CmdlineEnter" } },
+          "f3fora/cmp-spell",
+          "hrsh7th/cmp-buffer",
+          "hrsh7th/cmp-emoji",
+          "hrsh7th/cmp-nvim-lsp",
+          "hrsh7th/cmp-path",
+          "hrsh7th/cmp-vsnip",
+          "hrsh7th/vim-vsnip",
+
+          "onsails/lspkind-nvim",
+          {
+            "petertriho/cmp-git",
+            config = function()
+              require("cmp_git").setup()
+            end,
+            dependencies = { "nvim-lua/plenary.nvim" },
+          },
+        },
+      }
+    )
+

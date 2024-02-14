@@ -121,10 +121,10 @@ set $ws8 "8"
 set $ws9 "9"
 set $ws10 "10"
 
-#assign [class="Firefox"] $ws6
-#assign [class="Google-chrome"] $ws7
-#assign [class="DBeaver"] $ws2
-#assign [class="Slack"] $ws8
+assign [class="Firefox"] $ws1
+assign [class="Slack"] $ws2
+assign [class="Alacritty"] $ws3
+assign [class="Google-chrome"] $ws4
 
 # switch to workspace
 bindsym $mod+1 workspace number $ws1
@@ -198,3 +198,7 @@ for_window [class="^.*"] border pixel 1
 bindsym $mod+Shift+Control+s exec --no-startup-id systemctl suspend
 exec --no-startup-id dunst
 bindsym Print exec flameshot gui
+
+exec firefox
+exec slack
+exec alacritty
