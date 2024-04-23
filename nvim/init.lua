@@ -1,7 +1,6 @@
 _G.motch = {}
 local Plug = vim.fn['plug#']
 vim.call('plug#begin', '~/.config/nvim/plugged')
-Plug('ellisonleao/gruvbox.nvim')
 Plug('terryma/vim-multiple-cursors')
 Plug('sheerun/vim-polyglot')
 Plug('junegunn/fzf', {['do'] = vim.fn['fzf#install']})
@@ -32,15 +31,30 @@ Plug('echasnovski/mini.nvim')
 Plug('nvim-tree/nvim-web-devicons')
 Plug('elixir-editors/vim-elixir')
 Plug('rcarriga/nvim-notify')
-Plug('jedrzejboczar/possession.nvim')
+Plug('hrsh7th/cmp-nvim-lsp')
+Plug('f3fora/cmp-spell')
+Plug('hrsh7th/cmp-buffer')
+Plug('hrsh7th/cmp-path')
+Plug('hrsh7th/cmp-cmdline')
 Plug('hrsh7th/nvim-cmp')
+Plug('hrsh7th/cmp-vsnip')
+Plug('hrsh7th/vim-vsnip')
+Plug('onsails/lspkind-nvim')
+Plug('petertriho/cmp-git')
+Plug('jedrzejboczar/possession.nvim')
+Plug('sainnhe/gruvbox-material')
+Plug('nvim-telescope/telescope-ui-select.nvim')
 vim.call('plug#end')
 
 local sets = vim.opt
 
 vim.g.syntax = false
-sets.background="light"
-vim.cmd.colorscheme('gruvbox')
+sets.background="dark"
+vim.g.gruvbox_material_background = 'medium'
+vim.g.gruvbox_material_foreground = 'material'
+vim.g.gruvbox_material_transparent_background=0
+vim.cmd.colorscheme('gruvbox-material')
+
 
 sets.hidden=true
 
@@ -102,7 +116,7 @@ local function setup_elixirls(elixir_lsp)
   if elixir_lsp == "elixirls" and elixir_ls == "newest" then
     return {
       repo = "elixir-lsp/elixir-ls",
-      branch = "master",
+      tag  = "v0.20.0",
       settings = elixir.elixirls.settings {
         dialyzerEnabled = false,
         enableTestLenses = false,
@@ -136,7 +150,17 @@ local function setup_elixirls(elixir_lsp)
 end
 
 require("elixir").setup({
-  nextls = {enable = vim.env.ELIXIR_LSP == "nextls"},
+  nextls = {
+    enable = vim.env.ELIXIR_LSP == "nextls",
+    spitfire = true,
+    init_options = {
+      experimental = {
+         completions = {
+           enable = true
+         }
+      }
+    }
+  },
   credo = {enable = false},
   elixirls = setup_elixirls(vim.env.ELIXIR_LSP),
 })
@@ -179,6 +203,7 @@ require('telescope').setup{
     }
   }
 }
+require('telescope').load_extension("ui-select")
 
 vim.keymap.set("n", "<leader>sv", ":source $MYVIMRC<cr>", { noremap = true })
 vim.keymap.set("n", "<c-f>", ":Ag<space>", { noremap = true })
@@ -187,6 +212,8 @@ vim.keymap.set("n", "<leader>r", "<cmd>History<cr>", { noremap = true })
 vim.keymap.set("n", "<leader>g", "<cmd>Telescope live_grep<cr>", { noremap = true })
 vim.keymap.set("n", "<leader>F", "<cmd>Telescope git_files<cr>", { noremap = true })
 vim.keymap.set("n", "<leader>co", "<cmd>Telescope lsp_document_symbols<cr>", { noremap = true })
+vim.keymap.set("n", "<leader>ca", "<cmd>Telescope lsp_workspace_symbols<cr>", { noremap = true })
+vim.keymap.set("n", "<leader>ce", "<cmd>lua vim.lsp.buf.code_action()<CR>", { noremap = true })
 vim.keymap.set("n", "<leader>f", ":NERDTreeToggle<CR>", { noremap = false })
 vim.keymap.set("n", "<c-t>", ":tabnew<CR>", { noremap = false })
 vim.keymap.set("n", "<leader>1", "1gt", { noremap = true, silent = true })
@@ -414,18 +441,15 @@ require("noice").setup({
             mapping = cmp.mapping.preset.insert {
               ["<C-b>"] = cmp.mapping.scroll_docs(-4),
               ["<C-f>"] = cmp.mapping.scroll_docs(4),
-              ["<C-Space>"] = cmp.mapping.complete(),
+              ["<C-n>"] = cmp.mapping.complete(),
               ["<C-e>"] = cmp.mapping.close(),
               ["<C-y>"] = cmp.mapping.confirm { select = true },
             },
             sources = {
               { name = "nvim_lsp" },
               { name = "vsnip" },
-              { name = "vim-dadbod-completion" },
               { name = "spell", keyword_length = 5 },
-              -- { name = "rg", keyword_length = 3 },
-              -- { name = "buffer", keyword_length = 5 },
-              -- { name = "emoji" },
+              { name = "buffer", keyword_length = 3 },
               { name = "path" },
               { name = "git" },
             },
@@ -450,17 +474,11 @@ require("noice").setup({
             sources = cmp.config.sources({ { name = "path" } }, { { name = "cmdline", keyword_length = 2 } }),
           })
         -- Set up lspconfig.
-          local capabilities = require('cmp_nvim_lsp').default_capabilities()
-          -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-          require('lspconfig')['elixir_ls'].setup {
-            capabilities = capabilities
-          }
         end,
         dependencies = {
           { "hrsh7th/cmp-cmdline", event = { "CmdlineEnter" } },
           "f3fora/cmp-spell",
           "hrsh7th/cmp-buffer",
-          "hrsh7th/cmp-emoji",
           "hrsh7th/cmp-nvim-lsp",
           "hrsh7th/cmp-path",
           "hrsh7th/cmp-vsnip",
@@ -473,8 +491,9 @@ require("noice").setup({
               require("cmp_git").setup()
             end,
             dependencies = { "nvim-lua/plenary.nvim" },
-          },
+          }        
         },
       }
     )
+
 
