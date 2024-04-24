@@ -212,6 +212,7 @@ vim.keymap.set("n", "<leader>g", "<cmd>Telescope live_grep<cr>", { noremap = tru
 vim.keymap.set("n", "<leader>F", "<cmd>Telescope git_files<cr>", { noremap = true })
 vim.keymap.set("n", "<leader>co", "<cmd>Telescope lsp_document_symbols<cr>", { noremap = true })
 vim.keymap.set("n", "<leader>ca", "<cmd>Telescope lsp_workspace_symbols<cr>", { noremap = true })
+vim.keymap.set("n", "<leader>cg", "<cmd>Telescope diagnostics<cr>", { noremap = true })
 vim.keymap.set("n", "<leader>ce", "<cmd>lua vim.lsp.buf.code_action()<CR>", { noremap = true })
 vim.keymap.set("n", "<leader>f", ":NERDTreeToggle<CR>", { noremap = false })
 vim.keymap.set("n", "<c-t>", ":tabnew<CR>", { noremap = false })
